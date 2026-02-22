@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance Tracker - Frontend
 
-## Getting Started
+This is the frontend for a personal finance tracking application built with Next.js, React Query, Tailwind CSS, and TypeScript. It allows users to manage accounts, transactions, budgets, categories, and view dashboards.
 
-First, run the development server:
-
-```bash
+## Features
+- User authentication (login/register)
+- Dashboard with stats, trends, and recent transactions
+- Account management (create/update/delete)
+- Transaction tracking (create/update/delete with filters)
+- Category management
+- Budget creation and alerts
+- Profile settings
+- Responsive UI with dark mode support
+# Development mode (recommended - with ts-node-dev or nodemon)
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
+→ server starts on http://localhost:5000
+
+# Build TypeScript → JavaScript
+npm run build
 # or
-bun dev
-```
+yarn build
+# or
+pnpm build
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Start production server (after build)
+npm start
+# or
+yarn start
+# or
+pnpm start
+→ server starts on http://localhost:5000
+## Tech Stack
+- **Framework**: Next.js (React-based)
+- **State Management**: React Query (for data fetching/caching) + Zustand (for auth state)
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Types**: TypeScript
+- **Other**: Lucide icons, Recharts for charts, Zod for validation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture Overview
+- **Pages/Routes**: Next.js App Router (`/app` directory) with protected routes via middleware.
+  - Public: Home (`/`), Login (`/login`), Register (`/register`)
+  - Protected: Dashboard (`/dashboard`), Accounts (`/accounts`), Transactions (`/transactions`), etc.
+- **Components**: Reusable UI components in `/components` (e.g., Navbar, Sidebar, Cards).
+- **Hooks**: Custom hooks in `/hooks` for data fetching (e.g., `useAccounts`, `useAuth` using React Query).
+- **API Integration**: Axios in `/lib/axios.ts` with interceptors for auth tokens and error handling. Fetches from backend API.
+- **State**: Auth state persisted with Zustand + cookies for tokens.
+- **Layouts**: Root layout (`/app/layout.tsx`) with providers; Dashboard layout (`/app/dashboard/layout.tsx`) with sidebar/navbar.
+- **Middleware**: `/middleware.ts` for auth protection (redirects unauth users to login).
+- **Error Handling**: Global error boundaries and React Query error states.
+- **Deployment**: Optimized for Vercel (static/SSR support).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app follows a clean architecture: UI components → Hooks (business logic) → API layer.
 
-## Learn More
+## Setup Instructions
+1. **Prerequisites**:
+   - Node.js >= 18.x
+   - Yarn or npm
+   - Backend API running (see backend README for setup)
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Clone and Install**:
