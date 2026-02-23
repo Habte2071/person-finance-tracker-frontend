@@ -136,7 +136,7 @@ export default function RegisterPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="john@example.com"
+                  placeholder="Dani@example.com"
                   className="pl-9 sm:pl-10 h-9 sm:h-10 text-sm sm:text-base bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
                   {...register('email')}
                 />
