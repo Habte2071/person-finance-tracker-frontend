@@ -23,10 +23,17 @@ type ApiError = {
   message?: string;
 };
 
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
+// Updated schema with password and confirmPassword validation
+const loginSchema = z
+  .object({
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(1, 'Password is required'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'], // Error will appear under confirmPassword field
+  });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -45,15 +52,13 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setError('');
-      await login(data);
+      await login(data); // Note: confirmPassword is also sent here – adjust if needed
     } catch (err: unknown) {
-      // Type guard to extract message from unknown error
       const apiError = err as ApiError;
       setError(apiError.response?.data?.message || apiError.message || 'Login failed');
     }
   };
 
-  // Helper to safely extract error message from loginError (which comes from useAuth)
   const getErrorMessage = (err: unknown): string | undefined => {
     if (!err) return undefined;
     const apiError = err as ApiError;
@@ -125,6 +130,27 @@ export default function LoginPage() {
               {errors.password && (
                 <p className="text-xs sm:text-sm text-red-500 animate-in slide-in-from-top-2">
                   {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {/* New Confirm Password field */}
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="confirmPassword" className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                Confirm Password
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  className="pl-9 sm:pl-10 h-9 sm:h-10 text-sm sm:text-base bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
+                  {...register('confirmPassword')}
+                />
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-xs sm:text-sm text-red-500 animate-in slide-in-from-top-2">
+                  {errors.confirmPassword.message}
                 </p>
               )}
             </div>
