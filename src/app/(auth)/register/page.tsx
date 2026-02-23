@@ -23,19 +23,16 @@ type ApiError = {
   message?: string;
 };
 
-// Updated schema with password confirmation
-const registerSchema = z
-  .object({
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-    first_name: z.string().min(1, 'First name is required'),
-    last_name: z.string().min(1, 'Last name is required'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'], // Error will appear under confirmPassword field
-  });
+const registerSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
+  first_name: z.string().min(1, 'First name is required'),
+  last_name: z.string().min(1, 'Last name is required'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -54,7 +51,9 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       setError('');
-      await registerUser({ ...data, currency: 'USD' }); // Note: confirmPassword is also sent here
+      // Omit confirmPassword before sending to API
+      const { confirmPassword, ...registrationData } = data;
+      await registerUser({ ...registrationData, currency: 'USD' });
     } catch (err: unknown) {
       const apiError = err as ApiError;
       setError(apiError.response?.data?.message || apiError.message || 'Registration failed');
@@ -175,7 +174,7 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* New Confirm Password field */}
+            {/* New confirm password field */}
             <div className="space-y-1.5 sm:space-y-2">
               <Label htmlFor="confirmPassword" className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                 Confirm Password
